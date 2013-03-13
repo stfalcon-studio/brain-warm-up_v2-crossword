@@ -1,0 +1,17 @@
+{
+    "name" : "stfalcon-studio/brain-warm-up-2",
+    "description" : "Brain warm-up #2: Crossword maker",
+    "minimum-stability" : "stable",
+    "authors" : [
+        {
+            "name" : "ftrrtf",
+            "email" : "mail@ftrrtf.com"
+        }
+    ],
+    "autoload": {
+        "psr-0": {
+            "": "src/",
+            "BaseTest": "tests/"
+        }
+    }
+}
