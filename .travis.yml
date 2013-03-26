@@ -4,7 +4,14 @@ php:
 before_script:
   - curl -s https://getcomposer.org/installer | php -- --quiet
   - php composer.phar install
-script: phpunit
+  - pear channel-discover pear.cakephp.org
+  - pear install --alldeps cakephp/CakePHP_CodeSniffer
+  - pear install phpunit/phpcpd
+  - phpenv rehash
+script:
+  - phpunit
+  - phpcs --report="full" src/
+  - phpcpd --verbose src/
 notifications:
   email:
       - mail@ftrrtf.com
