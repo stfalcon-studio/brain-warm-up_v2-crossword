@@ -1,6 +1,6 @@
 <?php
 
-namespace Fre5h;
+namespace Fresh;
 
 /**
  * Class CrosswordMakerTest
