@@ -227,38 +227,74 @@ class CrosswordHelper
         list($wordX1, $wordX2) = $compatibility['x'];
         list($wordY1, $wordY2) = $compatibility['y'];
 
-        if (($wordX1[0] == $wordY2[0])
-            && ($wordX2[strlen($wordX2) - 1] == $wordY1[strlen($wordY1) - 1])
-            && ($wordY2[strlen($wordY2) - 1] == $wordX[0])
-            && ($wordX1[strlen($wordX1) - 1] == $wordY[0])
-            && ($wordY1[0] == $wordX[strlen($wordX) - 1])
-            && ($wordX2[0] == $wordY[strlen($wordY) - 1])
+        $wordXFirstLetter = $wordX[0];
+        $wordXLastLetter  = $wordX[strlen($wordX) - 1];
+
+        $wordYFirstLetter = $wordY[0];
+        $wordYLastLetter  = $wordY[strlen($wordY) - 1];
+
+        $wordX1FirstLetter = $wordX1[0];
+        $wordX1LastLetter  = $wordX1[strlen($wordX1) - 1];
+        $wordX2FirstLetter = $wordX2[0];
+        $wordX2LastLetter  = $wordX2[strlen($wordX2) - 1];
+
+        $wordY1FirstLetter = $wordY1[0];
+        $wordY1LastLetter  = $wordY1[strlen($wordY1) - 1];
+        $wordY2FirstLetter = $wordY2[0];
+        $wordY2LastLetter  = $wordY2[strlen($wordY2) - 1];
+
+        if (($wordX1FirstLetter == $wordY1FirstLetter)
+            && ($wordX1LastLetter == $wordYFirstLetter)
+            && ($wordY1LastLetter == $wordXFirstLetter)
+            && ($wordXLastLetter == $wordY2FirstLetter)
+            && ($wordYLastLetter == $wordX2FirstLetter)
+            && ($wordX2LastLetter == $wordY2LastLetter)
+            && (strlen($wordX1) == $crossX + 1)
+            && (strlen($wordY1) == $crossY + 1)
         ) {
-            return self::buildCrosswordAsString($wordX, $wordY, $wordX1, $wordY2, $wordX2, $wordY1, $crossX, $crossY);
-        } elseif (($wordX1[0] == $wordY1[0])
-            && ($wordX2[strlen($wordX2) - 1] == $wordY2[strlen($wordY2) - 1])
-            && ($wordY1[strlen($wordY1) - 1] == $wordX[0])
-            && ($wordX1[strlen($wordX1) - 1] == $wordY[0])
-            && ($wordY2[0] == $wordX[strlen($wordX) - 1])
-            && ($wordX2[0] == $wordY[strlen($wordY) - 1])
+            return [
+                'length' => strlen($wordX1),
+                'string' => self::buildCrosswordAsString($wordX, $wordY, $wordX1, $wordY1, $wordX2, $wordY2, $crossX, $crossY)
+            ];
+        } elseif (($wordX1FirstLetter == $wordY2FirstLetter)
+            && ($wordX1LastLetter == $wordYFirstLetter)
+            && ($wordY2LastLetter == $wordXFirstLetter)
+            && ($wordXLastLetter == $wordY1FirstLetter)
+            && ($wordYLastLetter == $wordX2FirstLetter)
+            && ($wordX2LastLetter == $wordY1LastLetter)
+            && (strlen($wordX1) == $crossX + 1)
+            && (strlen($wordY2) == $crossY + 1)
         ) {
-            return self::buildCrosswordAsString($wordX, $wordY, $wordX1, $wordY1, $wordX2, $wordY2, $crossX, $crossY);
-        } elseif (($wordX2[0] == $wordY2[0])
-            && ($wordX1[strlen($wordX1) - 1] == $wordY1[strlen($wordY1) - 1])
-            && ($wordY2[strlen($wordY2) - 1] == $wordX[0])
-            && ($wordX2[strlen($wordX2) - 1] == $wordY[0])
-            && ($wordY1[0] == $wordX[strlen($wordX) - 1])
-            && ($wordX1[0] == $wordY[strlen($wordY) - 1])
+            return [
+                'length' => strlen($wordX1),
+                'string' => self::buildCrosswordAsString($wordX, $wordY, $wordX1, $wordY2, $wordX2, $wordY1, $crossX, $crossY)
+            ];
+        } elseif (($wordX2FirstLetter == $wordY1FirstLetter)
+            && ($wordX2LastLetter == $wordYFirstLetter)
+            && ($wordY1LastLetter == $wordXFirstLetter)
+            && ($wordXLastLetter == $wordY2FirstLetter)
+            && ($wordYLastLetter == $wordX1FirstLetter)
+            && ($wordX1LastLetter == $wordY2LastLetter)
+            && (strlen($wordX2) == $crossX + 1)
+            && (strlen($wordY1) == $crossY + 1)
         ) {
-            return self::buildCrosswordAsString($wordX, $wordY, $wordX2, $wordY2, $wordX1, $wordY1, $crossX, $crossY);
-        } elseif (($wordX2[0] == $wordY1[0])
-            && ($wordX1[strlen($wordX1) - 1] == $wordY2[strlen($wordY2) - 1])
-            && ($wordY1[strlen($wordY1) - 1] == $wordX[0])
-            && ($wordX2[strlen($wordX2) - 1] == $wordY[0])
-            && ($wordY2[0] == $wordX[strlen($wordX) - 1])
-            && ($wordX1[0] == $wordY[strlen($wordY) - 1])
+            return [
+                'length' => strlen($wordX2),
+                'string' => self::buildCrosswordAsString($wordX, $wordY, $wordX2, $wordY1, $wordX1, $wordY2, $crossX, $crossY)
+            ];
+        } elseif (($wordX2FirstLetter == $wordY2FirstLetter)
+            && ($wordX2LastLetter == $wordYFirstLetter)
+            && ($wordY2LastLetter == $wordXFirstLetter)
+            && ($wordXLastLetter == $wordY1FirstLetter)
+            && ($wordYLastLetter == $wordX1FirstLetter)
+            && ($wordX1LastLetter == $wordY1LastLetter)
+            && (strlen($wordX2) == $crossX + 1)
+            && (strlen($wordY2) == $crossY + 1)
         ) {
-            return self::buildCrosswordAsString($wordX, $wordY, $wordX2, $wordY1, $wordX1, $wordY2, $crossX, $crossY);
+            return [
+                'length' => strlen($wordX2),
+                'string' => self::buildCrosswordAsString($wordX, $wordY, $wordX2, $wordY2, $wordX1, $wordY1, $crossX, $crossY)
+            ];
         }
 
         return false;

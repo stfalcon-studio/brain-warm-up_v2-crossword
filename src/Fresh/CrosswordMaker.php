@@ -40,9 +40,9 @@ class CrosswordMaker
                                     if (is_array($compatibilities)) {
                                         foreach ($compatibilities as $compatibility) {
                                             // Try to build crossword from current set of words
-                                            $crossword = CrosswordHelper::tryToBuildCrossword($wordX, $wordY, $compatibility, $i, $j);
-                                            if (is_string($crossword)) {
-                                                $results[] = $crossword;
+                                            $crosswordData = CrosswordHelper::tryToBuildCrossword($wordX, $wordY, $compatibility, $i, $j);
+                                            if (is_string($crosswordData['string'])) {
+                                                $results[$crosswordData['length']] = $crosswordData['string'];
                                             }
                                         }
                                     }
@@ -54,11 +54,13 @@ class CrosswordMaker
             }
 
             if (!empty($results)) {
-//                if (count($results) == 1) {
-                    return array_pop($results); // Get first and only one result
-//                } else {
-                    // @todo sorting
-//                }
+
+                if (count($results) > 1) {
+                    ksort($results);
+//                    print_r($results);
+                }
+
+                return array_shift($results); // Get first and only one result
             }
         }
 
