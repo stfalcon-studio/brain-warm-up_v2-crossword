@@ -28,7 +28,7 @@ abstract class BaseTest extends \PHPUnit_Framework_TestCase
     public function testCrosswordMaker($words, $expectedCrossword)
     {
         $crossword = $this->crosswordMaker->generate($words);
-        $this->assertEquals($crossword, $expectedCrossword);
+        $this->assertEquals($expectedCrossword, $crossword);
     }
 
     /**
