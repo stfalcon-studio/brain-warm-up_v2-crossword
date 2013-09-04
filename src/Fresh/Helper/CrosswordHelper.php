@@ -34,13 +34,13 @@ class CrosswordHelper
     }
 
     /**
-     * Check if eight could be made from array of words
+     * Check if crossword could be made from array of words
      *
      * @param array $words
      *
      * @return bool
      */
-    public static function canBeEight(array $words)
+    public static function canBeCrossword(array $words)
     {
         $result = false;
         $totalLength = 0;
@@ -49,7 +49,7 @@ class CrosswordHelper
             $totalLength += strlen($word);
         }
 
-        // Only even length is allowed for eight creation
+        // Only even length is allowed for crossword creation
         if ($totalLength % 2 === 0) {
             $gte5 = 0;
 
@@ -101,7 +101,7 @@ class CrosswordHelper
     /**
      * Split words into few groups for easy processing
      *
-     * One item of array should consist of:
+     * One item of array looks like this:
      * [longest horizontal word][longest vertical word][
      *     [another word],
      *     [another word],
@@ -214,19 +214,23 @@ class CrosswordHelper
     /**
      * Try to build crossword
      *
-     * @param string $wordX         Word X
-     * @param string $wordY         Word Y
-     * @param array  $compatibility Compatibility
-     * @param int    $crossX        Cross at position
-     * @param int    $crossY        Cross at position
+     * If crossword can be built from input words, then return array with length of top X word and string representation of crossword
+     * Otherwise return false
+     *
+     * @param string $wordX           Word X
+     * @param string $wordY           Word Y
+     * @param array  $compatibleWords Compatible words
+     * @param int    $crossXPosition  Cross X position
+     * @param int    $crossYPosition  Cross Y position
      *
      * @return array|bool
      */
-    public static function tryToBuildCrossword($wordX, $wordY, array $compatibility, $crossX, $crossY)
+    public static function tryToBuildCrossword($wordX, $wordY, array $compatibleWords, $crossXPosition, $crossYPosition)
     {
-        list($wordX1, $wordX2) = $compatibility['x'];
-        list($wordY1, $wordY2) = $compatibility['y'];
+        list($wordX1, $wordX2) = $compatibleWords['x'];
+        list($wordY1, $wordY2) = $compatibleWords['y'];
 
+        // Get first and last letters of each word
         $wordXFirstLetter = $wordX[0];
         $wordXLastLetter  = $wordX[strlen($wordX) - 1];
 
@@ -235,26 +239,41 @@ class CrosswordHelper
 
         $wordX1FirstLetter = $wordX1[0];
         $wordX1LastLetter  = $wordX1[strlen($wordX1) - 1];
+        $wordX1Length      = strlen($wordX1) - 1;
+
         $wordX2FirstLetter = $wordX2[0];
         $wordX2LastLetter  = $wordX2[strlen($wordX2) - 1];
+        $wordX2Length      = strlen($wordX2) - 1;
 
         $wordY1FirstLetter = $wordY1[0];
         $wordY1LastLetter  = $wordY1[strlen($wordY1) - 1];
+        $wordY1Length      = strlen($wordY1) - 1;
+
         $wordY2FirstLetter = $wordY2[0];
         $wordY2LastLetter  = $wordY2[strlen($wordY2) - 1];
+        $wordY2Length      = strlen($wordY2) - 1;
 
+        // Check each combination of compatible words (first and last letters) for compatibility with cross words
         if (($wordX1FirstLetter == $wordY1FirstLetter)
             && ($wordX1LastLetter == $wordYFirstLetter)
             && ($wordY1LastLetter == $wordXFirstLetter)
             && ($wordXLastLetter == $wordY2FirstLetter)
             && ($wordYLastLetter == $wordX2FirstLetter)
             && ($wordX2LastLetter == $wordY2LastLetter)
-            && (strlen($wordX1) == $crossX + 1)
-            && (strlen($wordY1) == $crossY + 1)
+            && ($wordX1Length == $crossXPosition) // Also length of the top X word should be same as cross X position
+            && ($wordY1Length == $crossYPosition) // similarly for top Y word
         ) {
             return [
-                'length' => strlen($wordX1),
-                'string' => self::buildCrosswordAsString($wordX, $wordY, $wordX1, $wordY1, $wordX2, $wordY2, $crossX, $crossY)
+                strlen($wordX1) => self::buildCrosswordAsString(
+                    $wordX,
+                    $wordY,
+                    $wordX1,
+                    $wordY1,
+                    $wordX2,
+                    $wordY2,
+                    $crossXPosition,
+                    $crossYPosition
+                )
             ];
         } elseif (($wordX1FirstLetter == $wordY2FirstLetter)
             && ($wordX1LastLetter == $wordYFirstLetter)
@@ -262,12 +281,20 @@ class CrosswordHelper
             && ($wordXLastLetter == $wordY1FirstLetter)
             && ($wordYLastLetter == $wordX2FirstLetter)
             && ($wordX2LastLetter == $wordY1LastLetter)
-            && (strlen($wordX1) == $crossX + 1)
-            && (strlen($wordY2) == $crossY + 1)
+            && ($wordX1Length == $crossXPosition)
+            && ($wordY2Length == $crossYPosition)
         ) {
             return [
-                'length' => strlen($wordX1),
-                'string' => self::buildCrosswordAsString($wordX, $wordY, $wordX1, $wordY2, $wordX2, $wordY1, $crossX, $crossY)
+                strlen($wordX1) => self::buildCrosswordAsString(
+                    $wordX,
+                    $wordY,
+                    $wordX1,
+                    $wordY2,
+                    $wordX2,
+                    $wordY1,
+                    $crossXPosition,
+                    $crossYPosition
+                )
             ];
         } elseif (($wordX2FirstLetter == $wordY1FirstLetter)
             && ($wordX2LastLetter == $wordYFirstLetter)
@@ -275,12 +302,20 @@ class CrosswordHelper
             && ($wordXLastLetter == $wordY2FirstLetter)
             && ($wordYLastLetter == $wordX1FirstLetter)
             && ($wordX1LastLetter == $wordY2LastLetter)
-            && (strlen($wordX2) == $crossX + 1)
-            && (strlen($wordY1) == $crossY + 1)
+            && ($wordX2Length == $crossXPosition)
+            && ($wordY1Length == $crossYPosition)
         ) {
             return [
-                'length' => strlen($wordX2),
-                'string' => self::buildCrosswordAsString($wordX, $wordY, $wordX2, $wordY1, $wordX1, $wordY2, $crossX, $crossY)
+                strlen($wordX2) => self::buildCrosswordAsString(
+                    $wordX,
+                    $wordY,
+                    $wordX2,
+                    $wordY1,
+                    $wordX1,
+                    $wordY2,
+                    $crossXPosition,
+                    $crossYPosition
+                )
             ];
         } elseif (($wordX2FirstLetter == $wordY2FirstLetter)
             && ($wordX2LastLetter == $wordYFirstLetter)
@@ -288,12 +323,20 @@ class CrosswordHelper
             && ($wordXLastLetter == $wordY1FirstLetter)
             && ($wordYLastLetter == $wordX1FirstLetter)
             && ($wordX1LastLetter == $wordY1LastLetter)
-            && (strlen($wordX2) == $crossX + 1)
-            && (strlen($wordY2) == $crossY + 1)
+            && ($wordX2Length == $crossXPosition)
+            && ($wordY2Length == $crossYPosition)
         ) {
             return [
-                'length' => strlen($wordX2),
-                'string' => self::buildCrosswordAsString($wordX, $wordY, $wordX2, $wordY2, $wordX1, $wordY1, $crossX, $crossY)
+                strlen($wordX2) => self::buildCrosswordAsString(
+                    $wordX,
+                    $wordY,
+                    $wordX2,
+                    $wordY2,
+                    $wordX1,
+                    $wordY1,
+                    $crossXPosition,
+                    $crossYPosition
+                )
             ];
         }
 
@@ -301,33 +344,41 @@ class CrosswordHelper
     }
 
     /**
-     * Build crossword in string format
+     * Build crossword as string
      *
-     * @param string $wordX       Middle X word
-     * @param string $wordY       Middle Y word
-     * @param string $wordXTop    Top X word
-     * @param string $wordYTop    Top Y word
-     * @param string $wordXBottom Bottom X word
-     * @param string $wordYBottom Bottom Y word
-     * @param int    $crossX      Cross X position
-     * @param int    $crossY      Cross Y position
+     * @param string $wordXMiddle    Middle X word
+     * @param string $wordYMiddle    Middle Y word
+     * @param string $wordXTop       Top X word
+     * @param string $wordYTop       Top Y word
+     * @param string $wordXBottom    Bottom X word
+     * @param string $wordYBottom    Bottom Y word
+     * @param int    $crossXPosition Cross X position
+     * @param int    $crossYPosition Cross Y position
      *
      * @return string Crossword in string format
      */
-    public static function buildCrosswordAsString($wordX, $wordY, $wordXTop, $wordYTop, $wordXBottom, $wordYBottom, $crossX, $crossY)
+    public static function buildCrosswordAsString(
+        $wordXMiddle,
+        $wordYMiddle,
+        $wordXTop,
+        $wordYTop,
+        $wordXBottom,
+        $wordYBottom,
+        $crossXPosition,
+        $crossYPosition)
     {
-        $crosswordAsString = '';
         $crossword = [];
 
-        // Init reset
-        for ($x = 0; $x <= strlen($wordX) - 1; $x++) {
-            for ($y = 0; $y <= strlen($wordY) - 1; $y++) {
+        // Init reset to ...
+        for ($x = 0; $x < strlen($wordXMiddle); $x++) {
+            for ($y = 0; $y < strlen($wordYMiddle); $y++) {
                 $crossword[$x][$y] = '.';
             }
         }
 
-        for ($x = 0; $x <= strlen($wordX) - 1; $x++) {
-            for ($y = 0; $y <= strlen($wordY) - 1; $y++) {
+        // Put letters of words to their places in the crossword matrix
+        for ($x = 0; $x < strlen($wordXMiddle); $x++) {
+            for ($y = 0; $y < strlen($wordYMiddle); $y++) {
                 // Add top X word
                 if (0 == $y) {
                     if (isset($wordXTop[$x])) {
@@ -341,34 +392,36 @@ class CrosswordHelper
                     }
                 }
                 // Add middle X word
-                if ($y == $crossY) {
-                    if (isset($wordX[$x])) {
-                        $crossword[$x][$y] = $wordX[$x];
+                if ($y == $crossYPosition) {
+                    if (isset($wordXMiddle[$x])) {
+                        $crossword[$x][$y] = $wordXMiddle[$x];
                     }
                 }
                 // Add middle Y word
-                if ($x == $crossX) {
-                    if (isset($wordY[$y])) {
-                        $crossword[$x][$y] = $wordY[$y];
+                if ($x == $crossXPosition) {
+                    if (isset($wordYMiddle[$y])) {
+                        $crossword[$x][$y] = $wordYMiddle[$y];
                     }
                 }
                 // Add bottom X word
-                if ((strlen($wordY) - 1) == $y && $x >= $crossX) {
-                    if (isset($wordXBottom[$x - $crossX])) {
-                        $crossword[$x][$y] = $wordXBottom[$x - $crossX];
+                if ((strlen($wordYMiddle) - 1) == $y && $x >= $crossXPosition) {
+                    if (isset($wordXBottom[$x - $crossXPosition])) {
+                        $crossword[$x][$y] = $wordXBottom[$x - $crossXPosition];
                     }
                 }
                 // Add bottom Y word
-                if (strlen($wordX) - 1 == $x && $y >= $crossY) {
-                    if (isset($wordYBottom[$y - $crossY])) {
-                        $crossword[$x][$y] = $wordYBottom[$y - $crossY];
+                if (strlen($wordXMiddle) - 1 == $x && $y >= $crossYPosition) {
+                    if (isset($wordYBottom[$y - $crossYPosition])) {
+                        $crossword[$x][$y] = $wordYBottom[$y - $crossYPosition];
                     }
                 }
             }
         }
 
-        for ($y = 0; $y <= count($crossword[0]) - 1; $y++) {
-            for ($x = 0; $x <= count($crossword) - 1; $x++) {
+        // Convert array to string
+        $crosswordAsString = '';
+        for ($y = 0; $y < count($crossword[0]); $y++) {
+            for ($x = 0; $x < count($crossword); $x++) {
                 $crosswordAsString .= $crossword[$x][$y];
 
             }

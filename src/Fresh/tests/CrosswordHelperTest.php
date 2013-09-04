@@ -71,24 +71,24 @@ class CrosswordHelperTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * Test eight
+     * Test crossword
      *
-     * @param array $words   Array of words
-     * @param bool  $isEight Is eight
+     * @param array $words          Array of words
+     * @param bool  $canBeCrossword Can be crossword
      *
-     * @dataProvider eightProvider
+     * @dataProvider crosswordProvider
      */
-    public function testEight(array $words, $isEight)
+    public function testIfWordsCanBeCrossword(array $words, $canBeCrossword)
     {
-        $this->assertEquals($isEight, CrosswordHelper::canBeEight($words));
+        $this->assertEquals($canBeCrossword, CrosswordHelper::canBeCrossword($words));
     }
 
     /**
-     * Data provider for testEight
+     * Data provider for testIfWordsCanBeCrossword
      *
      * @return array
      */
-    public static function eightProvider()
+    public static function crosswordProvider()
     {
         $data[0] = [
             [
@@ -437,30 +437,46 @@ class CrosswordHelperTest extends \PHPUnit_Framework_TestCase
     /**
      * Test building crossword as string
      *
-     * @param array $words        Array of words
-     * @param bool  $isCompatible Is compatible
+     * @param string $wordXMiddle    Word X middle
+     * @param string $wordYMiddle    Word Y middle
+     * @param string $wordXUp        Word X up
+     * @param string $wordYUp        Word Y up
+     * @param string $wordXDown      Word X down
+     * @param string $wordYDown      Word Y down
+     * @param int    $crossXPosition Cross X position
+     * @param int    $crossYPosition Cross Y position
+     * @param string $expectedString Expected string
      *
      * @dataProvider crosswordAsStringProvider
      */
-    public function testBuildCrosswordAsString($wordX, $wordY, $wordXUp, $wordYUp, $wordXDown, $wordYDown, $crossX, $crossY, $expectedString)
+    public function testBuildCrosswordAsString(
+        $wordXMiddle,
+        $wordYMiddle,
+        $wordXUp,
+        $wordYUp,
+        $wordXDown,
+        $wordYDown,
+        $crossXPosition,
+        $crossYPosition,
+        $expectedString)
     {
         $this->assertEquals(
             $expectedString,
             CrosswordHelper::buildCrosswordAsString(
-                $wordX,
-                $wordY,
+                $wordXMiddle,
+                $wordYMiddle,
                 $wordXUp,
                 $wordYUp,
                 $wordXDown,
                 $wordYDown,
-                $crossX,
-                $crossY
+                $crossXPosition,
+                $crossYPosition
             )
         );
     }
 
     /**
-     * Data provider for testCheckFirstAndLastLettersForCompatibility
+     * Data provider for testBuildCrosswordAsString
      *
      * @return array
      */
